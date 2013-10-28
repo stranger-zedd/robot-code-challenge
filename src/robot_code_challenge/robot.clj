@@ -1,19 +1,23 @@
 (ns robot-code-challenge.robot
-  (:gen-class))
+  (:gen-class)
+  (:use robot-code-challenge.bearing))
 
 (defprotocol RobotProtocol
-  "Defines the protocol for the Robot class"
   (x [this])
   (y [this])
   (bearing [this])
-  (place [this x y bearing]))
+  (move [this])
+  (turn-right [this])
+  (turn-left [this])
+  (place [this x y bearing])
+  (report-position [this]))
 
-(deftype Robot [^{:volatile-mutable true} _x 
+(deftype Robot [^{:volatile-mutable true} -x 
                 ^{:volatile-mutable true} -y
                 ^{:volatile-mutable true} -bearing]
   RobotProtocol
   (x [this]
-    _x)
+    -x)
 
   (y [this]
     -y)
@@ -21,14 +25,26 @@
   (bearing [this]
     -bearing)
 
-  (place [this new-x y bearing]
-    (set! _x new-x)
+  (move [this]
+    (set! -x (+ -x (.x-part -bearing)))
+    (set! -y (+ -y (.y-part -bearing))))    
+
+  (turn-right [this]
+    (set! -bearing (create-bearing (mod (+ (.bearing -bearing) 90) 360))))
+
+  (turn-left [this]
+    (set! -bearing (create-bearing (mod (- (.bearing -bearing) 90) 360))))
+
+  (place [this x y bearing]
+    (set! -x x)
     (set! -y y)
-    (set! -bearing bearing)
-    this))
+    (set! -bearing (create-bearing bearing))
+    this)
+  
+  (report-position [this]
+    (format "%d, %d: %s", -x, -y, -bearing)))
 
-(defn create-robot []
-  (new Robot 0 0 0))
 
-(defn place [x y bearing]
-  (list x y bearing))
+(defn create-robot 
+  ([] (new Robot 0 0 (create-bearing)))
+  ([x y bearing] (new Robot x y (create-bearing bearing))))

@@ -1,13 +1,16 @@
-# robot-code-challenge
+Robot Code Challenge
+====================
 
-A Clojure library designed to ... well, that part is up to you.
+This is a learning project suggested by Ryan. I did it in Clojure, which I
+didn't know (very much) before starting this project; please forgive my lack
+of idiomacy.
 
-## Usage
-
-FIXME
+Things I learned so far:
+* Clojure, while it has s-expressions, is _not_ very lispy, and appears to be going for a more functional approach to programming
+* You still have to jump through quite a few hoops for the JVM
 
 ## License
 
-Copyright © 2013 FIXME
+Copyright © 2013 Michael Vigilante
 
-Distributed under the Eclipse Public License, the same as Clojure.
+Distributed under the Eclipse Public License
