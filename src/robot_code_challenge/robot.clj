@@ -50,8 +50,8 @@
 
 (defn create-robot [& options]
   (let [opts (apply hash-map options)]
-    (let [x (or (get opts :x) 0)
-          y (or (get opts :y) 0)
+    (let [x (or (get opts :x) -1)
+          y (or (get opts :y) -1)
           bearing (or (get opts :bearing) (create-bearing))
           table (or (get opts :table) (create-table))]
 

@@ -17,10 +17,10 @@
 (deftest create-robot-test
   (testing "Without arguments"
     (let [robot (create-robot)]
-      (testing "x should return a default value"
-        (is (= (.x robot) 0)))
-      (testing "y should return a default value"
-        (is (= (.y robot) 0)))
+      (testing "x should return an invalid value"
+        (is (= (.x robot) -1)))
+      (testing "y should return an invalid value"
+        (is (= (.y robot) -1)))
       (testing "bearing should return a default value"
         (is (= (.bearing (.bearing robot)) 0)))
       (testing "table should return a default value"
