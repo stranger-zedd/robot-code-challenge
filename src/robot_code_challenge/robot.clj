@@ -1,6 +1,8 @@
 (ns robot-code-challenge.robot
   (:gen-class)
-  (:use robot-code-challenge.bearing))
+  (:use robot-code-challenge.bearing
+        robot-code-challenge.table)
+  (:import [robot_code_challenge.bearing Bearing]))
 
 (defprotocol RobotProtocol
   (x [this])
@@ -14,7 +16,8 @@
 
 (deftype Robot [^{:volatile-mutable true} -x 
                 ^{:volatile-mutable true} -y
-                ^{:volatile-mutable true} -bearing]
+                ^{:volatile-mutable true} -bearing
+                table]
   RobotProtocol
   (x [this]
     -x)
@@ -45,6 +48,15 @@
     (format "%d, %d: %s", -x, -y, -bearing)))
 
 
-(defn create-robot 
-  ([] (new Robot 0 0 (create-bearing)))
-  ([x y bearing] (new Robot x y (create-bearing bearing))))
+(defn create-robot [& options]
+  (let [opts (apply hash-map options)]
+    (let [x (or (get opts :x) 0)
+          y (or (get opts :y) 0)
+          bearing (or (get opts :bearing) (create-bearing))
+          table (or (get opts :table) (create-table))]
+
+      ;; This looks kinda ugly; it's making a robot, and if a bearing hasn't been
+      ;; passed in, it tries to make one out of whatever HAS been passed in.
+      (new Robot x y (if (instance? Bearing bearing) 
+                       bearing 
+                       (create-bearing bearing)) table))))
