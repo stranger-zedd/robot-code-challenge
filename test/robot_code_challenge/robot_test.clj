@@ -1,18 +1,18 @@
 (ns robot-code-challenge.robot-test
   (:use clojure.test
         robot-code-challenge.robot
-        robot-code-challenge.bearing)
+        robot-code-challenge.bearing
+        robot-code-challenge.position)
   (:import [robot_code_challenge.robot Robot]))
 
 (deftest accessor-test
-  (let [robot (new Robot 1 2 3 4)]
+  (let [robot (new Robot (create-position :x 1 :y 2 :bearing 3) 4)]
     (testing "x should return the value of x"
       (is (= (.x robot) 1)))
     (testing "y should return the value of y"
       (is (= (.y robot) 2)))
-    ;; Bearing is the wrong type here, but we aren't testing the Bearing class.
     (testing "bearing should return the value of bearing"
-      (is (= (.bearing robot) 3)))))
+      (is (= (.bearing (.bearing robot)) 3)))))
 
 (deftest create-robot-test
   (testing "Without arguments"
@@ -42,11 +42,11 @@
 
 (deftest place-test
   (let [robot (create-robot)]
-    (.place robot 10 20 30)
+    (.place robot 9 10 30)
     (testing "It should correctly assign x"
-      (is (= (.x robot) 10)))
+      (is (= (.x robot) 9)))
     (testing "It should correctly assign y"
-      (is (= (.y robot) 20)))
+      (is (= (.y robot) 10)))
     (testing "It should correctly assign bearing"
       (is (= (.bearing (.bearing robot)) 30)))))
 
@@ -67,19 +67,39 @@
         (testing "x should equal one"
           (is (== (.x robot) 1)))))
     (testing "For 180 degrees"
-      (let [robot (create-robot :x 0 :y 0 :bearing 180)]
-        (.move robot)
-        (testing "y should equal negative one"
-          (is (== (.y robot) -1)))
-        (testing "x should equal zero"
-          (is (== (.x robot) 0)))))
-    (testing "For 270 degrees"
-      (let [robot (create-robot :x 0 :y 0 :bearing 270)]
+      (let [robot (create-robot :x 0 :y 1 :bearing 180)]
         (.move robot)
         (testing "y should equal zero"
           (is (== (.y robot) 0)))
-        (testing "x should equal negative one"
-          (is (== (.x robot) -1)))))))
+        (testing "x should equal zero"
+          (is (== (.x robot) 0)))))
+    (testing "For 270 degrees"
+      (let [robot (create-robot :x 1 :y 0 :bearing 270)]
+        (.move robot)
+        (testing "y should equal zero"
+          (is (== (.y robot) 0)))
+        (testing "x should equal zero"
+          (is (== (.x robot) 0)))))))
+
+(deftest invalid-move-test
+  (testing "It shouldn't be able to move into the negatives"
+    (let [robot (create-robot :x 0 :y 0 :bearing 270)]
+      (is (== 0 (.x (move robot)))))
+    (let [robot (create-robot :x 0 :y 0 :bearing 180)]
+      (is (== 0 (.y (move robot))))))
+  (testing "It shoudln't be able to move off the board"
+    (let [robot (create-robot :x 10 :y 10 :bearing 0)]
+      (is (== 10 (.x (move robot)))))
+    (let [robot (create-robot :x 10 :y 10 :bearing 90)]
+      (is (== 10 (.y (move robot)))))))
+
+(deftest invalid-place-test
+  (testing "It shouldn't be able to be placed into the negatives"
+    (let [robot (create-robot :x 0 :y 0)]
+      (is (== 0 (.x (.place robot -1 0 90))))))
+  (testing "It shouldn't be able to be placed off the board"
+    (let [robot (create-robot :x 0 :y 0)]
+      (is (== 0 (.x (.place robot 11 0 90)))))))
 
 (deftest turn-right-test
   (let [robot (create-robot)]
@@ -94,6 +114,10 @@
       (is (= (.bearing (.bearing robot)) 270)))))
 
 (deftest report-position-test
-  (let [robot (new Robot 1 2 (create-bearing) (create-table))]
-    (testing "It should correctly report x, y and facing"
-      (is (= (.report-position robot) "1, 2: north")))))
+  (testing "It should correctly report x, y and facing"
+    (let [robot (create-robot :x 1 :y 2)]
+      (is (= (.report-position robot) "1, 2: north"))))
+  (testing "It should report when the position is invalid"
+    (let [robot (create-robot)]
+      (is (= "INVALID PLACEMENT" (.report-position robot))))))
+          

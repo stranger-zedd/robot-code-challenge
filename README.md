@@ -8,6 +8,7 @@ of idiomacy.
 Things I learned so far:
 * Clojure, while it has s-expressions, is _not_ very lispy, and appears to be going for a more functional approach to programming
 * You still have to jump through quite a few hoops for the JVM
+* You can't _use_ anaphors in your macros, you can only introduce them.
 
 ## License
 

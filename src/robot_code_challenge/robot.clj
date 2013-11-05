@@ -1,9 +1,9 @@
 (ns robot-code-challenge.robot
   (:gen-class)
   (:use robot-code-challenge.bearing
-        robot-code-challenge.table)
-  (:import [robot_code_challenge.bearing Bearing]))
-
+        robot-code-challenge.table
+        robot-code-challenge.position))
+                                
 (defprotocol RobotProtocol
   (x [this])
   (y [this])
@@ -14,38 +14,47 @@
   (place [this x y bearing])
   (report-position [this]))
 
-(deftype Robot [^{:volatile-mutable true} -x 
-                ^{:volatile-mutable true} -y
-                ^{:volatile-mutable true} -bearing
-                table]
+(deftype Robot [^{:volatile-mutable true} -position table]
   RobotProtocol
   (x [this]
-    -x)
+    (.x -position))
 
   (y [this]
-    -y)
+    (.y -position))
 
   (bearing [this]
-    -bearing)
+    (.bearing -position))
 
   (move [this]
-    (set! -x (+ -x (.x-part -bearing)))
-    (set! -y (+ -y (.y-part -bearing))))    
+    (let [x (.x this) 
+          y (.y this)]
+      (set! -position (create-position :x (+ x (.x-part (.bearing this))) 
+                                       :y (+ y (.y-part (.bearing this))) 
+                                       :bearing bearing :table table :old-position -position))))
 
-  (turn-right [this]
-    (set! -bearing (create-bearing (mod (+ (.bearing -bearing) 90) 360))))
+  (turn-right [this]      
+    (let [x (.x this) 
+          y (.y this)]
+      (set! -position (create-position :x x :y y 
+                                       :bearing (mod (+ (.bearing (.bearing this)) 90) 360)))))
 
   (turn-left [this]
-    (set! -bearing (create-bearing (mod (- (.bearing -bearing) 90) 360))))
+    (let [x (.x this) 
+          y (.y this)]
+      (set! -position (create-position :x x :y y 
+                                       :bearing (mod (- (.bearing (.bearing this)) 90) 360)))))
 
   (place [this x y bearing]
-    (set! -x x)
-    (set! -y y)
-    (set! -bearing (create-bearing bearing))
+    (set! -position (create-position :x x :y y 
+                                     :bearing bearing 
+                                     :table table 
+                                     :old-position -position))    
     this)
   
   (report-position [this]
-    (format "%d, %d: %s", -x, -y, -bearing)))
+    (if (.check-bounds table (.x this) (.y this))
+      (format "%d, %d: %s", (.x this) (.y this) (.bearing this))
+      "INVALID PLACEMENT")))
 
 
 (defn create-robot [& options]
@@ -55,8 +64,4 @@
           bearing (or (get opts :bearing) (create-bearing))
           table (or (get opts :table) (create-table))]
 
-      ;; This looks kinda ugly; it's making a robot, and if a bearing hasn't been
-      ;; passed in, it tries to make one out of whatever HAS been passed in.
-      (new Robot x y (if (instance? Bearing bearing) 
-                       bearing 
-                       (create-bearing bearing)) table))))
+      (new Robot (create-position :x x :y y :bearing bearing) table))))
