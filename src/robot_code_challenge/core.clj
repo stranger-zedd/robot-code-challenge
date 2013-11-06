@@ -1,3 +1,6 @@
-(ns robot-code-challenge.core)
+(ns robot-code-challenge.core
+  (:use robot-code-challenge.run-candidate))
 
-;; This is where the 'main' method will eventually go.
+(defn -main [& args]
+  (let [rc (create-run-candidate args)]
+    (println rc)))
