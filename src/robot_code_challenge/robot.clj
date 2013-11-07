@@ -14,41 +14,41 @@
   (place [this x y bearing])
   (report-position [this]))
 
-(deftype Robot [^{:volatile-mutable true} -position table]
+(deftype Robot [^{:volatile-mutable true} position table]
   RobotProtocol
   (x [this]
-    (.x -position))
+    (.x position))
 
   (y [this]
-    (.y -position))
+    (.y position))
 
   (bearing [this]
-    (.bearing -position))
+    (.bearing position))
 
   (move [this]
     (let [x (.x this) 
           y (.y this)]
-      (set! -position (create-position :x (+ x (.x-part (.bearing this))) 
-                                       :y (+ y (.y-part (.bearing this))) 
-                                       :bearing bearing :table table :old-position -position))))
+      (set! position (create-position :x (+ x (.x-part (.bearing this))) 
+                                      :y (+ y (.y-part (.bearing this))) 
+                                      :bearing bearing :table table :old-position position))))
 
   (turn-right [this]      
     (let [x (.x this) 
           y (.y this)]
-      (set! -position (create-position :x x :y y 
-                                       :bearing (mod (+ (.bearing (.bearing this)) 90) 360)))))
+      (set! position (create-position :x x :y y 
+                                      :bearing (mod (+ (.bearing (.bearing this)) 90) 360)))))
 
   (turn-left [this]
     (let [x (.x this) 
           y (.y this)]
-      (set! -position (create-position :x x :y y 
-                                       :bearing (mod (- (.bearing (.bearing this)) 90) 360)))))
+      (set! position (create-position :x x :y y 
+                                      :bearing (mod (- (.bearing (.bearing this)) 90) 360)))))
 
   (place [this x y bearing]
-    (set! -position (create-position :x x :y y 
-                                     :bearing bearing 
-                                     :table table 
-                                     :old-position -position))    
+    (set! position (create-position :x x :y y 
+                                    :bearing bearing 
+                                    :table table 
+                                    :old-position position))    
     this)
   
   (report-position [this]
