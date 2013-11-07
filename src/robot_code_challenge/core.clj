@@ -3,4 +3,4 @@
 
 (defn -main [& args]
   (let [rc (create-run-candidate args)]
-    (println rc)))
+    (.run rc)))

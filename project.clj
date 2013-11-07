@@ -4,4 +4,5 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [org.clojure/math.numeric-tower "0.0.2"]
-                 [org.clojure/algo.generic "0.1.1"]])
+                 [org.clojure/algo.generic "0.1.1"]]
+  :main robot-code-challenge.core)

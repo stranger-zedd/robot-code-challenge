@@ -30,7 +30,7 @@
           y (.y this)]
       (set! position (create-position :x (+ x (.x-part (.bearing this))) 
                                       :y (+ y (.y-part (.bearing this))) 
-                                      :bearing bearing :table table :old-position position))))
+                                      :bearing (.bearing this) :table table :old-position position))))
 
   (turn-right [this]      
     (let [x (.x this) 
@@ -53,9 +53,8 @@
   
   (report-position [this]
     (if (.check-bounds table (.x this) (.y this))
-      (format "%d, %d: %s", (.x this) (.y this) (.bearing this))
+      (format "%d, %d: %s", (int (.x this)) (int (.y this)) (.bearing this))
       "INVALID PLACEMENT")))
-
 
 (defn create-robot [& options]
   (let [opts (apply hash-map options)]
