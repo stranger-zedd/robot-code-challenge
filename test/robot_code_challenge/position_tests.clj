@@ -1,4 +1,4 @@
-(ns robot-code-challenge.position-test
+(ns robot-code-challenge.position-tests
   (:use clojure.test
         robot-code-challenge.position
         robot-code-challenge.bearing
@@ -26,10 +26,13 @@
       (testing "bearing should set bearing as a number"
         (is (= 10 (.bearing (.bearing (create-position :bearing 10))))))))
     (testing "with a table"
-      (testing "it should return nil if x is out of bounds"
-        (is (= nil (create-position :x -1 :table (create-table)))))
-      (testing "it should return nil if y is out of bounds"
-        (is (= nil (create-position :y -1 :table (create-table)))))
-      (testing "it should return an object if x and y are within bounds"
-        (is (not (= nil (create-position :y 1 :x 1 :table (create-table)))))))))
+      (let [table (create-table 10 10 [[1 2]])]
+        (testing "it should return nil if x is out of bounds"
+          (is (= nil (create-position :x -1 :table table))))
+        (testing "it should return nil if y is out of bounds"
+          (is (= nil (create-position :y -1 :table table))))
+        (testing "it should return an object if x and y are within bounds"
+          (is (not (= nil (create-position :y 1 :x 1 :table table)))))
+        (testing "it should return nil if there is a dirt pile at its co-ordinates"
+          (is (= nil (create-position :x 1 :y 2 :table table))))))))
       

@@ -1,6 +1,7 @@
 (ns robot-code-challenge.robot-test
   (:use clojure.test
         robot-code-challenge.robot
+        robot-code-challenge.table
         robot-code-challenge.bearing
         robot-code-challenge.position)
   (:import [robot_code_challenge.robot Robot]))
@@ -22,10 +23,7 @@
       (testing "y should return an invalid value"
         (is (= (.y robot) -1)))
       (testing "bearing should return a default value"
-        (is (= (.bearing (.bearing robot)) 0)))
-      (testing "table should return a default value"
-        (is (= (.x-bound (.table robot)) 10))
-        (is (= (.y-bound (.table robot)) 10)))))
+        (is (= (.bearing (.bearing robot)) 0)))))
   (testing "With arguments"
     (testing "x should return as specified"
       (is (= (.x (create-robot :x 1)) 1)))
@@ -98,7 +96,7 @@
     (let [robot (create-robot :x 0 :y 0)]
       (is (== 0 (.x (.place robot -1 0 90))))))
   (testing "It shouldn't be able to be placed off the board"
-    (let [robot (create-robot :x 0 :y 0)]
+    (let [robot (create-robot :x 0 :y 0 :table (create-table 10 10 []))]
       (is (== 0 (.x (.place robot 11 0 90)))))))
 
 (deftest turn-right-test
@@ -112,6 +110,11 @@
     (testing "after calling left, the robot should be facing west"
       (.turn-left robot)
       (is (= (.bearing (.bearing robot)) 270)))))
+
+(deftest clean-tile-test
+  (let [robot (create-robot :x 1 :y 1 :bearing 0 :table (create-table 10 10 [[2 1] [1 2]]))]
+    (testing "it should clear the tile in front of the robot"
+      (is (= [[2 1]] (.clean-tile robot))))))
 
 (deftest report-position-test
   (testing "It should correctly report x, y and facing"

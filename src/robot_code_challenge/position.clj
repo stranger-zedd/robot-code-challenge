@@ -19,7 +19,7 @@
           table (get opts :table)]
       
       (if table
-        (if (.check-bounds table x y)
+        (if (.clear? table x y)
           (make-position x y bearing)
           (get opts :old-position))
         (make-position x y bearing)))))

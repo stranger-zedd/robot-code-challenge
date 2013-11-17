@@ -9,6 +9,7 @@
   (y [this])
   (bearing [this])
   (move [this])
+  (clean-tile [this])
   (turn-right [this])
   (turn-left [this])
   (place [this x y bearing])
@@ -28,8 +29,8 @@
   (move [this]
     (let [x (.x this) 
           y (.y this)]
-      (set! position (create-position :x (+ x (.x-part (.bearing this))) 
-                                      :y (+ y (.y-part (.bearing this))) 
+      (set! position (create-position :x (int (+ x (.x-part (.bearing this))))
+                                      :y (int (+ y (.y-part (.bearing this))))
                                       :bearing (.bearing this) :table table :old-position position))))
 
   (turn-right [this]      
@@ -50,7 +51,12 @@
                                     :table table 
                                     :old-position position))    
     this)
-  
+
+  (clean-tile [this]
+    (let [x (int (+ (.x this) (.x-part (.bearing this))))
+          y (int (+ (.y this) (.y-part (.bearing this))))]
+      (.clean table x y)))
+
   (report-position [this]
     (if (.check-bounds table (.x this) (.y this))
       (format "%d, %d: %s", (int (.x this)) (int (.y this)) (.bearing this))

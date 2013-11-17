@@ -14,6 +14,8 @@
       "move" (.move robot)
       "left" (.turn-left robot)
       "right" (.turn-right robot)
+      "clean" (if (empty? (.clean-tile robot))
+                (println "Game Over!"))
       "place" (apply #(.place robot %1 %2 %3) (map #(Integer. (re-find #"\d+" %)) (rest command-parts)))
       "report" (println (.report-position robot))
       (println "INVALID COMMAND"))))
@@ -39,5 +41,5 @@
   
 (defn create-run-candidate [args]
   (if (and args (not (empty? args)))
-    (new FileRunCandidate (first args))
+    (new FileRunCandidate (first args)))
     (new CLIRunCandidate)))
